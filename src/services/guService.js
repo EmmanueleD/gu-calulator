@@ -48,7 +48,7 @@ const getDataFromFile = async (filePath) => {
       try {
         let result = await processRows(
           parsedRows,
-          transformDateTimeArray,
+          transformDateTimeArray,≤
           calculateTotalHours
         );
         return result;
