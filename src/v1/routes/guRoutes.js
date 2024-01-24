@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.get("/", guController.getVanilla);
 
-router.get("/:filePath", guController.getDataFromFile);
+router.get("/api/v1/:filePath", guController.getDataFromFile);
 
 module.exports = router;

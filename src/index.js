@@ -11,6 +11,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
-app.use("/api/v1", v1GuRoutes);
+app.use("/", v1GuRoutes);
 
 app.listen(PORT, () => console.log(`gu-calculator is running on port ${PORT}`));
