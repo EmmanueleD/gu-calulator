@@ -1,3 +1,9 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "https://vercel.com/emmanueled/gu-calulator/api/$1"
+    }
+  ]
 }
