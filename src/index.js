@@ -1,5 +1,4 @@
 require("dotenv").config();
-require("cors");
 
 const express = require("express");
 
@@ -13,5 +12,5 @@ const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 app.use("/", v1GuRoutes);
-app.use(cors());
+
 app.listen(PORT, () => console.log(`gu-calculator is running on port ${PORT}`));
