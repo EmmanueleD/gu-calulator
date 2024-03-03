@@ -2,6 +2,7 @@ const xlsx = require("xlsx");
 const fs = require("fs");
 const https = require("https");
 const { escape } = require("querystring");
+const axios = require("axios");
 
 const getVanilla = () => {
   return "emmanuele ti dice 'ciao!";
@@ -269,7 +270,145 @@ const getDataFromFile = async (filePath) => {
   }
 };
 
+const fudoAuthUrl = process.env.NODE_FUDO_AUTH_URL;
+const fudoApiUrl = process.env.NODE_FUDO_API_URL;
+const fudoKey = process.env.NODE_FUDO_KEY;
+const fudoSecret = process.env.NODE_FUDO_SECRET;
+
+let token = null;
+
+async function getFudoToken() {
+  try {
+    const response = await axios.post(
+      // `${fudoAuthUrl}`,
+      `https://auth.fu.do/api`,
+      {
+        apiKey: "NDQzMDJANjQ0Nw==",
+        apiSecret: "TRv8g6ZaGWbxXE4I1JayaJKwT7RCiFVQ",
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+
+    const data = response.data;
+    if (response.status === 200) {
+      token = data.token;
+      return data.token;
+    } else {
+      throw new Error(data.message || "Failed to get token");
+    }
+  } catch (error) {
+    console.error("Error while obtaining token:", error);
+    throw error;
+  }
+}
+
+async function fetchFudo(endpoint, method = "GET", body = null) {
+  if (!token) {
+    await getToken();
+  }
+
+  if (body) {
+    body = JSON.parse(body);
+  }
+
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    let options = { method, headers };
+
+    if (body) {
+      options.data = body;
+    }
+
+    const response = await axios(`${fudoApiUrl}/${endpoint}`, options);
+
+    if (response) {
+      return response.data;
+    } else {
+      return response;
+    }
+  } catch (error) {
+    console.error("Error while fetching data:", error);
+    throw error;
+  }
+}
+
+async function getFudoCustomerByAttribute(
+  attribute,
+  method = "GET",
+  body = null
+) {
+  if (!token) {
+    await getToken();
+  }
+
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    let options = { method, headers };
+
+    if (body) {
+      options.data = body;
+    }
+
+    let page = {
+      number: 1,
+      size: 500,
+    };
+
+    let result = [];
+    let currentPage = [];
+
+    do {
+      currentPage.splice(0);
+      let filteredResults = [];
+      let res = await axios(
+        `${fudoApiUrl}/customers?page[number]=${page.number}&page[size]=${page.size}`,
+        options
+      );
+
+      currentPage = res.data.data;
+
+      filteredResults = currentPage.filter((customer) => {
+        if (!customer.attributes[attribute.key]) {
+          return false;
+        }
+
+        if (
+          customer.attributes[attribute.key]
+            .toLowerCase()
+            .includes(attribute.value.toLowerCase())
+        ) {
+          return true;
+        }
+
+        return false;
+      });
+
+      result = result.concat(filteredResults);
+
+      page.number = page.number + 1;
+    } while (currentPage.length > 0);
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   getVanilla,
   getDataFromFile,
+  getFudoToken,
+  fetchFudo,
+  getFudoCustomerByAttribute,
 };
