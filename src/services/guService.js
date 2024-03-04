@@ -327,7 +327,10 @@ async function fetchFudo(endpoint, method = "GET", body = null) {
       options.data = body;
     }
 
-    const response = await axios(`${fudoApiUrl}/${endpoint}`, options);
+    const response = await axios(
+      `${fudoApiUrl}/${decodeURIComponent(endpoint)}`,
+      options
+    );
 
     if (response) {
       return response.data;

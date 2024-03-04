@@ -39,11 +39,7 @@ const getFudoToken = async (req, res) => {
 const fetchFudo = async (req, res) => {
   const { endpoint, method, body } = req.params;
   try {
-    const data = await guService.fetchFudo(
-      decodeURIComponent(endpoint),
-      method,
-      body
-    );
+    const data = await guService.fetchFudo(endpoint, method, body);
     res.send({ status: "OK ", data });
   } catch (error) {
     res
