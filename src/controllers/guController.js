@@ -37,7 +37,7 @@ const getFudoToken = async (req, res) => {
 };
 
 const fetchFudo = async (req, res) => {
-  const { endpoint, method, body } = JSON.parse(req.body);
+  const { endpoint, method, body } = req.params;
   try {
     const data = await guService.fetchFudo(endpoint, method, body);
     res.send({ status: "OK ", data });
@@ -55,7 +55,7 @@ const getFudoCustomerByAttribute = async (req, res) => {
       key: attKey,
       value: attVal,
     });
-
+    console.log("data", data);
     res.send({ status: "OK EMMD", data });
   } catch (error) {
     res
