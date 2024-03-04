@@ -308,39 +308,39 @@ async function getFudoToken() {
 
 async function makeFudoRequest(method, endpoint, body = null) {
   console.log("fudo", { endpoint, body });
-  return { status: 525, message: "NO AUTORIZADO" };
-  // if (!token) {
-  //   await getFudoToken();
-  // }
 
-  // if (body) {
-  //   body = JSON.parse(body);
-  // }
+  if (!token) {
+    await getFudoToken();
+  }
 
-  // try {
-  //   const headers = {
-  //     Authorization: `Bearer ${token}`,
-  //   };
+  if (body) {
+    body = JSON.parse(body);
+  }
 
-  //   let options = { method, headers };
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
 
-  //   if (body) {
-  //     options.data = body;
-  //   }
+    let options = { method, headers };
 
-  //   const response = await axios(`${fudoApiUrl}/${endpoint}`, options);
+    if (body) {
+      options.data = body;
+    }
 
-  //   console.log("RESPONSE", response.data);
+    const response = await axios(`${fudoApiUrl}/${endpoint}`, options);
 
-  //   if (response.status >= 200 && response.status < 300) {
-  //     return response.data.data;
-  //   } else {
-  //     throw new Error(response.data.message || "Failed to fetch Fudo data");
-  //   }
-  // } catch (error) {
-  //   console.error("Error while fetching data:", error);
-  //   throw error;
-  // }
+    console.log("RESPONSE", response.data);
+
+    if (response.status >= 200 && response.status < 300) {
+      return response.data.data;
+    } else {
+      throw new Error(response.data.message || "Failed to fetch Fudo data");
+    }
+  } catch (error) {
+    console.error("Error while fetching data:", error);
+    throw error;
+  }
 }
 
 async function getFudo(endpoint, body = null) {
