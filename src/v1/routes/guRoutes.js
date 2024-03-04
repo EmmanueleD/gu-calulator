@@ -11,7 +11,12 @@ router.get("/api/v1/:filePath", guController.getDataFromFile);
 router.get("/api/v1/fudo-api/token", guController.getFudoToken);
 
 router.post(
-  "/api/v1/fudo-api/fetch/:method/:endpoint/:body",
+  "/api/v1/fudo-api/fetch/POST/:endpoint/:body",
+  guController.fetchFudo
+);
+
+router.get(
+  "/api/v1/fudo-api/fetch/GET/:endpoint/:body",
   guController.fetchFudo
 );
 

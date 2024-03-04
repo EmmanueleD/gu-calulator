@@ -327,15 +327,12 @@ async function fetchFudo(endpoint, method = "GET", body = null) {
       options.data = body;
     }
 
-    const response = await axios(
-      `${fudoApiUrl}/${decodeURIComponent(endpoint)}`,
-      options
-    );
+    const response = await axios(`${fudoApiUrl}/${endpoint}`, options);
 
-    if (response) {
-      return response.data;
+    if (response.status === 200) {
+      return response.data.data;
     } else {
-      return response;
+      throw new Error(response.data.message || "Failed to fetch Fudo data");
     }
   } catch (error) {
     console.error("Error while fetching data:", error);
