@@ -1,7 +1,6 @@
 const xlsx = require("xlsx");
 const fs = require("fs");
 const https = require("https");
-const { escape } = require("querystring");
 const axios = require("axios");
 
 const getVanilla = () => {
@@ -307,7 +306,48 @@ async function getFudoToken() {
   }
 }
 
-async function fetchFudo(endpoint, method = "GET", body = null) {
+async function getFudo(endpoint, body = null) {
+  console.log("fudo", { endpoint, body });
+
+  if (!token) {
+    await getFudoToken();
+  }
+
+  if (body) {
+    body = JSON.parse(body);
+  }
+
+  console.log("BODY", body);
+
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    let options = { method: "GET", headers };
+
+    if (body) {
+      options.data = body;
+    }
+
+    const response = await axios(`${fudoApiUrl}/${endpoint}`, options);
+
+    console.log("RESPONSE", response.data);
+
+    if (response.status === 200) {
+      return response.data.data;
+    } else {
+      throw new Error(response.data.message || "Failed to fetch Fudo data");
+    }
+  } catch (error) {
+    console.error("Error while fetching data:", error);
+    throw error;
+  }
+}
+
+async function postFudo(endpoint, body = null) {
+  console.log("fudo", { endpoint, body });
+
   if (!token) {
     await getFudoToken();
   }
@@ -321,13 +361,140 @@ async function fetchFudo(endpoint, method = "GET", body = null) {
       Authorization: `Bearer ${token}`,
     };
 
-    let options = { method, headers };
+    let options = { method: "POST", headers };
+
+    if (body) {
+      options.data = body;
+    }
+
+    console.log("POST REQUEST ", {
+      endpoint: `${fudoApiUrl}/${endpoint}`,
+      options: options,
+    });
+
+    const response = await axios(`${fudoApiUrl}/${endpoint}`, options);
+
+    console.log("RESPONSE", response.data);
+
+    if (response.status >= 200 && response.status < 300) {
+      return response.data.data;
+    } else {
+      throw new Error(response.data.message || "Failed to fetch Fudo data");
+    }
+  } catch (error) {
+    console.error("Error while fetching data:", error);
+    throw error;
+  }
+}
+
+async function patchFudo(endpoint, body = null) {
+  console.log("fudo", { endpoint, body });
+
+  if (!token) {
+    await getFudoToken();
+  }
+
+  if (body) {
+    body = JSON.parse(body);
+  }
+
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    let options = { method: "PATCH", headers };
+
+    if (body) {
+      options.data = body;
+    }
+
+    console.log("PATCH REQUEST ", {
+      endpoint: `${fudoApiUrl}/${endpoint}`,
+      options: options,
+    });
+
+    const response = await axios(`${fudoApiUrl}/${endpoint}`, options);
+
+    console.log("RESPONSE", response.data);
+
+    if (response.status >= 200 && response.status < 300) {
+      return response.data.data;
+    } else {
+      throw new Error(response.data.message || "Failed to fetch Fudo data");
+    }
+  } catch (error) {
+    console.error("Error while fetching data:", error);
+    throw error;
+  }
+}
+
+async function putFudo(endpoint, body = null) {
+  console.log("fudo", { endpoint, body });
+
+  if (!token) {
+    await getFudoToken();
+  }
+
+  if (body) {
+    body = JSON.parse(body);
+  }
+
+  console.log("BODY", body);
+
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    let options = { method: "PUT", headers };
 
     if (body) {
       options.data = body;
     }
 
     const response = await axios(`${fudoApiUrl}/${endpoint}`, options);
+
+    console.log("RESPONSE", response.data);
+
+    if (response.status === 200) {
+      return response.data.data;
+    } else {
+      throw new Error(response.data.message || "Failed to fetch Fudo data");
+    }
+  } catch (error) {
+    console.error("Error while fetching data:", error);
+    throw error;
+  }
+}
+
+async function deleteFudo(endpoint, body = null) {
+  console.log("fudo", { endpoint, body });
+
+  if (!token) {
+    await getFudoToken();
+  }
+
+  if (body) {
+    body = JSON.parse(body);
+  }
+
+  console.log("BODY", body);
+
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    let options = { method: "DELETE", headers };
+
+    if (body) {
+      options.data = body;
+    }
+
+    const response = await axios(`${fudoApiUrl}/${endpoint}`, options);
+
+    console.log("RESPONSE", response.data);
 
     if (response.status === 200) {
       return response.data.data;
@@ -409,6 +576,10 @@ module.exports = {
   getVanilla,
   getDataFromFile,
   getFudoToken,
-  fetchFudo,
+  getFudo,
+  postFudo,
+  patchFudo,
+  deleteFudo,
+  putFudo,
   getFudoCustomerByAttribute,
 };

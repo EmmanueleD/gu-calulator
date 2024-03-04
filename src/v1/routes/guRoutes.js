@@ -12,28 +12,22 @@ router.get("/api/v1/fudo-api/token", guController.getFudoToken);
 
 router.post(
   "/api/v1/fudo-api/fetch/POST/:endpoint/:body",
-  guController.fetchFudo
+  guController.postFudo
 );
 
 router.patch(
   "/api/v1/fudo-api/fetch/PATCH/:endpoint/:body",
-  guController.fetchFudo
+  guController.patchFudo
 );
 
 router.delete(
   "/api/v1/fudo-api/fetch/DELETE/:endpoint/:body",
-  guController.fetchFudo
+  guController.deleteFudo
 );
 
-router.put(
-  "/api/v1/fudo-api/fetch/PUT/:endpoint/:body",
-  guController.fetchFudo
-);
+router.put("/api/v1/fudo-api/fetch/PUT/:endpoint/:body", guController.putFudo);
 
-router.get(
-  "/api/v1/fudo-api/fetch/GET/:endpoint/:body",
-  guController.fetchFudo
-);
+router.get("/api/v1/fudo-api/fetch/GET/:endpoint/:body", guController.getFudo);
 
 router.get(
   "/api/v1/fudo-api/customer/attribute/:attKey/:attVal",
