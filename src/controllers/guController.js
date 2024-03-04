@@ -56,7 +56,7 @@ const getFudoCustomerByAttribute = async (req, res) => {
       value: attVal,
     });
 
-    res.send({ status: "OK ", data: data.data });
+    res.send({ status: "OK ", data });
   } catch (error) {
     res
       .status(400)

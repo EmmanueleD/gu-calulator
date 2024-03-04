@@ -309,7 +309,7 @@ async function getFudoToken() {
 
 async function fetchFudo(endpoint, method = "GET", body = null) {
   if (!token) {
-    await getToken();
+    await getFudoToken();
   }
 
   if (body) {
@@ -346,7 +346,7 @@ async function getFudoCustomerByAttribute(
   body = null
 ) {
   if (!token) {
-    await getToken();
+    await getFudoToken();
   }
 
   try {
