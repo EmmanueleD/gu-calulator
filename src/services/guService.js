@@ -306,7 +306,7 @@ async function getFudoToken() {
   }
 }
 
-async function getFudo(endpoint, body = null) {
+async function makeFudoRequest(method, endpoint, body = null) {
   console.log("fudo", { endpoint, body });
 
   if (!token) {
@@ -317,14 +317,12 @@ async function getFudo(endpoint, body = null) {
     body = JSON.parse(body);
   }
 
-  console.log("BODY", body);
-
   try {
     const headers = {
       Authorization: `Bearer ${token}`,
     };
 
-    let options = { method: "GET", headers };
+    let options = { method, headers };
 
     if (body) {
       options.data = body;
@@ -334,7 +332,7 @@ async function getFudo(endpoint, body = null) {
 
     console.log("RESPONSE", response.data);
 
-    if (response.status === 200) {
+    if (response.status >= 200 && response.status < 300) {
       return response.data.data;
     } else {
       throw new Error(response.data.message || "Failed to fetch Fudo data");
@@ -343,168 +341,26 @@ async function getFudo(endpoint, body = null) {
     console.error("Error while fetching data:", error);
     throw error;
   }
+}
+
+async function getFudo(endpoint, body = null) {
+  return makeFudoRequest("GET", endpoint, body);
 }
 
 async function postFudo(endpoint, body = null) {
-  console.log("fudo", { endpoint, body });
-
-  if (!token) {
-    await getFudoToken();
-  }
-
-  if (body) {
-    body = JSON.parse(body);
-  }
-
-  try {
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    let options = { method: "POST", headers };
-
-    if (body) {
-      options.data = body;
-    }
-
-    console.log("POST REQUEST ", {
-      endpoint: `${fudoApiUrl}/${endpoint}`,
-      options: options,
-    });
-
-    const response = await axios(`${fudoApiUrl}/${endpoint}`, options);
-
-    console.log("RESPONSE", response.data);
-
-    if (response.status >= 200 && response.status < 300) {
-      return response.data.data;
-    } else {
-      throw new Error(response.data.message || "Failed to fetch Fudo data");
-    }
-  } catch (error) {
-    console.error("Error while fetching data:", error);
-    throw error;
-  }
+  return makeFudoRequest("POST", endpoint, body);
 }
 
 async function patchFudo(endpoint, body = null) {
-  console.log("fudo", { endpoint, body });
-
-  if (!token) {
-    await getFudoToken();
-  }
-
-  if (body) {
-    body = JSON.parse(body);
-  }
-
-  try {
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    let options = { method: "PATCH", headers };
-
-    if (body) {
-      options.data = body;
-    }
-
-    console.log("PATCH REQUEST ", {
-      endpoint: `${fudoApiUrl}/${endpoint}`,
-      options: options,
-    });
-
-    const response = await axios(`${fudoApiUrl}/${endpoint}`, options);
-
-    console.log("RESPONSE", response.data);
-
-    if (response.status >= 200 && response.status < 300) {
-      return response.data.data;
-    } else {
-      throw new Error(response.data.message || "Failed to fetch Fudo data");
-    }
-  } catch (error) {
-    console.error("Error while fetching data:", error);
-    throw error;
-  }
+  return makeFudoRequest("PATCH", endpoint, body);
 }
 
 async function putFudo(endpoint, body = null) {
-  console.log("fudo", { endpoint, body });
-
-  if (!token) {
-    await getFudoToken();
-  }
-
-  if (body) {
-    body = JSON.parse(body);
-  }
-
-  console.log("BODY", body);
-
-  try {
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    let options = { method: "PUT", headers };
-
-    if (body) {
-      options.data = body;
-    }
-
-    const response = await axios(`${fudoApiUrl}/${endpoint}`, options);
-
-    console.log("RESPONSE", response.data);
-
-    if (response.status === 200) {
-      return response.data.data;
-    } else {
-      throw new Error(response.data.message || "Failed to fetch Fudo data");
-    }
-  } catch (error) {
-    console.error("Error while fetching data:", error);
-    throw error;
-  }
+  return makeFudoRequest("PUT", endpoint, body);
 }
 
 async function deleteFudo(endpoint, body = null) {
-  console.log("fudo", { endpoint, body });
-
-  if (!token) {
-    await getFudoToken();
-  }
-
-  if (body) {
-    body = JSON.parse(body);
-  }
-
-  console.log("BODY", body);
-
-  try {
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-
-    let options = { method: "DELETE", headers };
-
-    if (body) {
-      options.data = body;
-    }
-
-    const response = await axios(`${fudoApiUrl}/${endpoint}`, options);
-
-    console.log("RESPONSE", response.data);
-
-    if (response.status === 200) {
-      return response.data.data;
-    } else {
-      throw new Error(response.data.message || "Failed to fetch Fudo data");
-    }
-  } catch (error) {
-    console.error("Error while fetching data:", error);
-    throw error;
-  }
+  return makeFudoRequest("DELETE", endpoint, body);
 }
 
 async function getFudoCustomerByAttribute(
