@@ -20,6 +20,16 @@ router.patch(
   guController.fetchFudo
 );
 
+router.delete(
+  "/api/v1/fudo-api/fetch/DELETE/:endpoint/:body",
+  guController.fetchFudo
+);
+
+router.put(
+  "/api/v1/fudo-api/fetch/PUT/:endpoint/:body",
+  guController.fetchFudo
+);
+
 router.get(
   "/api/v1/fudo-api/fetch/GET/:endpoint/:body",
   guController.fetchFudo
