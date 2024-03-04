@@ -55,7 +55,7 @@ const getFudoCustomerByAttribute = async (req, res) => {
       key: attKey,
       value: attVal,
     });
-    console.log("data", data);
+
     res.send({ status: "OK EMMD", data });
   } catch (error) {
     res
