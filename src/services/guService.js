@@ -281,10 +281,10 @@ async function getFudoToken() {
   try {
     const response = await axios.post(
       // `${fudoAuthUrl}`,
-      `https://auth.fu.do/api`,
+      fudoAuthUrl,
       {
-        apiKey: "NDQzMDJANjQ0Nw==",
-        apiSecret: "TRv8g6ZaGWbxXE4I1JayaJKwT7RCiFVQ",
+        apiKey: fudoKey,
+        apiSecret: fudoSecret,
       },
       {
         headers: {
