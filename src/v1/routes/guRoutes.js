@@ -15,6 +15,11 @@ router.post(
   guController.fetchFudo
 );
 
+router.patch(
+  "/api/v1/fudo-api/fetch/PATCH/:endpoint/:body",
+  guController.fetchFudo
+);
+
 router.get(
   "/api/v1/fudo-api/fetch/GET/:endpoint/:body",
   guController.fetchFudo
