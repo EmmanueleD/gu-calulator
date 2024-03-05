@@ -61,7 +61,6 @@ const postFudo = async (req, res) => {
 };
 
 const patchFudo = async (req, res) => {
-  console.log("PATCH FUDO", req.params);
   const { endpoint, body } = req.params;
   try {
     const data = await guService.patchFudo(endpoint, body);

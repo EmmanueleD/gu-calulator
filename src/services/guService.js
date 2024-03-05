@@ -307,8 +307,7 @@ async function getFudoToken() {
 }
 
 async function makeFudoRequest(method, endpoint, body = null) {
-  console.log("fudo", { endpoint, body });
-
+  // return { status: 525, message: "NO AUTORIZADO" };
   if (!token) {
     await getFudoToken();
   }
@@ -330,8 +329,6 @@ async function makeFudoRequest(method, endpoint, body = null) {
 
     const response = await axios(`${fudoApiUrl}/${endpoint}`, options);
 
-    console.log("RESPONSE", response.data);
-
     if (response.status >= 200 && response.status < 300) {
       return response.data.data;
     } else {
@@ -352,8 +349,6 @@ async function postFudo(endpoint, body = null) {
 }
 
 async function patchFudo(endpoint, body = null) {
-  console.log("PATCH FUDO", { endpoint, body });
-
   return makeFudoRequest("PATCH", endpoint, body);
 }
 
