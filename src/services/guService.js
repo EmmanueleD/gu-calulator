@@ -78,9 +78,10 @@ const getDataFromFile = async (filePath) => {
       let currentUserIndex = 0;
 
       for (const row of inputArray) {
-        if (extractName(row)) {
+        if (extractName(row) && extractNumber(row)) {
           currentUser = {
             name: extractName(row),
+            fingerId: extractNumber(row),
             data: [],
           };
           result.push(currentUser);
@@ -108,6 +109,22 @@ const getDataFromFile = async (filePath) => {
         let lastName = match[2];
 
         return firstName + " " + lastName;
+      } else {
+        return false;
+      }
+    }
+
+    function extractNumber(input) {
+      if (typeof input !== "string") {
+        return false;
+      }
+
+      let pattern = /\b(\d+)\s*[A-Za-z]+\s*[A-Za-z]+\b/; // Matches a number, optional spaces, and then first and last names
+      let match = input.match(pattern);
+
+      if (match) {
+        let number = match[1];
+        return number;
       } else {
         return false;
       }
