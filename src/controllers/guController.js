@@ -112,6 +112,76 @@ const getFudoCustomerByAttribute = async (req, res) => {
   }
 };
 
+const getCustomers = async (req, res) => {
+  try {
+    const data = await guService.getCustomers();
+    res.send({ status: "OK", data });
+  } catch (error) {
+    res
+      .status(400)
+      .send({ status: "FAILED", message: error?.message || error });
+  }
+};
+
+const getCustomer = async (req, res) => {
+  const { customerId } = req.params;
+  try {
+    const data = await guService.getCustomer(customerId);
+    res.send({ status: "OK", data });
+  } catch (error) {
+    res
+      .status(400)
+      .send({ status: "FAILED", message: error?.message || error });
+  }
+};
+
+const postCustomer = async (req, res) => {
+  const body = req.body;
+  try {
+    const data = await guService.postCustomer(body);
+    res.send({ status: "OK", data });
+  } catch (error) {
+    res
+      .status(400)
+      .send({ status: "FAILED", message: error?.message || error });
+  }
+};
+
+const getUsers = async (req, res) => {
+  try {
+    const data = await guService.getUsers();
+    res.send({ status: "OK", data });
+  } catch (error) {
+    res
+      .status(400)
+      .send({ status: "FAILED", message: error?.message || error });
+  }
+};
+
+const getUser = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const data = await guService.getUser(userId);
+    res.send({ status: "OK", data });
+  } catch (error) {
+    res
+      .status(400)
+      .send({ status: "FAILED", message: error?.message || error });
+  }
+};
+
+const postUser = async (req, res) => {
+  const body = req.body;
+  try {
+    const data = await guService.postUser(body);
+    res.send({ status: "OK", data });
+  } catch (error) {
+    res
+      .status(400)
+      .send({ status: "FAILED", message: error?.message || error });
+  }
+};
+
 module.exports = {
   getVanilla,
   getDataFromFile,
@@ -122,4 +192,12 @@ module.exports = {
   deleteFudo,
   putFudo,
   getFudoCustomerByAttribute,
+
+  getCustomers,
+  getCustomer,
+  postCustomer,
+
+  getUsers,
+  getUser,
+  postUser,
 };

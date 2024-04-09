@@ -329,9 +329,9 @@ async function makeFudoRequest(method, endpoint, body = null) {
     await getFudoToken();
   }
 
-  if (body) {
-    body = JSON.parse(body);
-  }
+  // if (body) {
+  //   body = JSON.parse(body);
+  // }
 
   try {
     const headers = {
@@ -442,6 +442,30 @@ async function getFudoCustomerByAttribute(
   }
 }
 
+async function getCustomers() {
+  return await makeFudoRequest("GET", "customers");
+}
+
+async function getCustomer(customerId) {
+  return await makeFudoRequest("GET", `customers/${customerId}`);
+}
+
+async function postCustomer(body) {
+  return await makeFudoRequest("POST", "customers", body);
+}
+
+async function getUsers() {
+  return await makeFudoRequest("GET", "users");
+}
+
+async function getUser(userId) {
+  return await makeFudoRequest("GET", `users/${userId}`);
+}
+
+async function postUser(body) {
+  return await makeFudoRequest("POST", "users", body);
+}
+
 module.exports = {
   getVanilla,
   getDataFromFile,
@@ -452,4 +476,12 @@ module.exports = {
   deleteFudo,
   putFudo,
   getFudoCustomerByAttribute,
+
+  getCustomers,
+  getCustomer,
+  postCustomer,
+
+  getUsers,
+  getUser,
+  postUser,
 };

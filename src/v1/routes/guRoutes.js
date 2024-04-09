@@ -34,4 +34,12 @@ router.get(
   guController.getFudoCustomerByAttribute
 );
 
+router.get("/api/v1/fudo-api/customers", guController.getCustomers);
+router.get("/api/v1/fudo-api/customer/:customerId", guController.getCustomer);
+router.post("/api/v1/fudo-api/customer", guController.postCustomer);
+
+router.get("/api/v1/fudo-api/users", guController.getUsers);
+router.get("/api/v1/fudo-api/user/:userId", guController.getUser);
+router.post("/api/v1/fudo-api/user", guController.postUser);
+
 module.exports = router;
