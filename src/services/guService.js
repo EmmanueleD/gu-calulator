@@ -60,10 +60,7 @@ const getDataFromFile = async (filePath) => {
     async function processRows(result, transformFunction, calculateFunction) {
       let currentUserData = [];
       await result.forEach((user) => {
-        currentUserData = transformFunction(
-          user.data,
-          user.name == "Alejandro Paul"
-        );
+        currentUserData = transformFunction(user.data);
         user.data = currentUserData;
         user.totalHours = calculateFunction(currentUserData);
       });
@@ -273,6 +270,8 @@ const getDataFromFile = async (filePath) => {
     function calculateTotalHours(userData) {
       let totalHours = 0;
 
+      console.log("userData", userData);
+
       for (let i = 0; i < userData.length; i++) {
         totalHours += userData[i].tot_hours;
       }
@@ -329,9 +328,9 @@ async function makeFudoRequest(method, endpoint, body = null) {
     await getFudoToken();
   }
 
-  // if (body) {
-  //   body = JSON.parse(body);
-  // }
+  if (body) {
+    body = JSON.parse(body);
+  }
 
   try {
     const headers = {
