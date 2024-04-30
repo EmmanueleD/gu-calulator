@@ -186,8 +186,8 @@ const getSalesByPage = async (req, res) => {
   const { page } = req.params;
 
   try {
-    const data = await guService.getSalesByPage(page);
-    res.send({ status: "OK", data });
+    const res = await guService.getSalesByPage(page);
+    res.send({ status: "OK", data: res.data });
   } catch (error) {
     res
       .status(400)
