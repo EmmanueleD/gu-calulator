@@ -463,7 +463,7 @@ async function postUser(body) {
   return await makeFudoRequest("POST", "users", body);
 }
 
-async function getSales(params) {
+async function getSalesByPage(page) {
   if (!token) {
     await getFudoToken();
   }
@@ -475,7 +475,7 @@ async function getSales(params) {
     let options = { method: "GET", headers };
 
     const response = await axios(
-      `${fudoApiUrl}/sales?page[number]=${params.page}&page[size]=500&sort=-createdAt`,
+      `${fudoApiUrl}/sales?page[number]=${page}&page[size]=500&sort=-createdAt`,
       options
     );
 
@@ -488,56 +488,6 @@ async function getSales(params) {
     console.error("Error while fetching data:", error);
     throw error;
   }
-}
-
-async function getSalesInInterval(params) {
-  const { startDate, endDate } = params;
-
-  let currentSales = [];
-  let validCurrentSales = [];
-  let salesList = [];
-  let page = 1;
-  let callCount = 0;
-  let reachedValidSales = false;
-
-  do {
-    currentSales.splice(0);
-    validCurrentSales.splice(0);
-    currentSales = await getSales({ page });
-
-    validCurrentSales = currentSales.filter((sale) => {
-      const createdAt = new Date(sale.attributes.createdAt);
-      return createdAt <= new Date(endDate);
-    });
-
-    if (validCurrentSales.length > 0) {
-      reachedValidSales = true;
-    }
-
-    if (reachedValidSales) {
-      // Filter out sales after the startDate
-      validCurrentSales = validCurrentSales.filter((sale) => {
-        const createdAt = new Date(sale.attributes.createdAt);
-        return createdAt >= new Date(startDate);
-      });
-
-      salesList = salesList.concat(validCurrentSales);
-    }
-
-    page++;
-    callCount++;
-
-    // Check if it's the tenth call, and wait 15 seconds
-    if (callCount % 10 === 0) {
-      await delay(15000); // Wait for 15 seconds
-    }
-  } while (!reachedValidSales || validCurrentSales.length > 0);
-
-  return salesList.filter((sale) => sale.relationships.customer.data);
-}
-
-async function delay(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 module.exports = {
@@ -559,5 +509,5 @@ module.exports = {
   getUser,
   postUser,
 
-  getSalesInInterval,
+  getSalesByPage,
 };

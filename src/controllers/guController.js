@@ -182,9 +182,11 @@ const postUser = async (req, res) => {
   }
 };
 
-const getSalesInInterval = async (req, res) => {
+const getSalesByPage = async (req, res) => {
+  const { page } = req.params;
+
   try {
-    const data = await guService.getSalesInInterval(req.params);
+    const data = await guService.getSalesByPage(page);
     res.send({ status: "OK", data });
   } catch (error) {
     res
@@ -212,5 +214,5 @@ module.exports = {
   getUser,
   postUser,
 
-  getSalesInInterval,
+  getSalesByPage,
 };

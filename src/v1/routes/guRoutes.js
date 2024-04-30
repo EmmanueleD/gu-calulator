@@ -42,9 +42,6 @@ router.get("/api/v1/fudo-api/users", guController.getUsers);
 router.get("/api/v1/fudo-api/user/:userId", guController.getUser);
 router.post("/api/v1/fudo-api/user", guController.postUser);
 
-router.get(
-  "/api/v1/fudo-api/sales/:startDate/:endDate",
-  guController.getSalesInInterval
-);
+router.get("/api/v1/fudo-api/sales-by-page/:page", guController.getSalesByPage);
 
 module.exports = router;
