@@ -8,6 +8,10 @@ const getVanilla = () => {
 };
 
 const getDataFromFile = async (filePath) => {
+  if (!filePath) {
+    throw new Error("Please provide a file path");
+  }
+
   try {
     const url = decodeURIComponent(filePath);
 
