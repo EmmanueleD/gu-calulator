@@ -3,6 +3,11 @@ const fs = require("fs");
 const https = require("https");
 const axios = require("axios");
 
+const { createClient } = require("@supabase/supabase-js");
+
+const supabaseUrl = process.env.NODE_SUPABASE_URL;
+const supabaseKey = process.env.NODE_SUPABASE_ANON;
+
 const getVanilla = () => {
   return "emmanuele ti dice 'ciao!";
 };
@@ -270,8 +275,6 @@ const getDataFromFile = async (filePath) => {
     function calculateTotalHours(userData) {
       let totalHours = 0;
 
-      console.log("userData", userData);
-
       for (let i = 0; i < userData.length; i++) {
         totalHours += userData[i].tot_hours;
       }
@@ -465,6 +468,144 @@ async function postUser(body) {
   return await makeFudoRequest("POST", "users", body);
 }
 
+async function getSales(params) {
+  if (!token) {
+    await getFudoToken();
+  }
+  try {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    let options = { method: "GET", headers };
+
+    const response = await axios(
+      `${fudoApiUrl}/sales?page[number]=${params.page}&page[size]=500&sort=-createdAt`,
+      options
+    );
+
+    if (response.status >= 200 && response.status < 300) {
+      return response.data.data;
+    } else {
+      throw new Error(response.data.message || "Failed to fetch Fudo data");
+    }
+  } catch (error) {
+    console.error("Error while fetching data:", error);
+    throw error;
+  }
+}
+
+async function getSalesInInterval(params) {
+  const { startDate, endDate } = params;
+
+  let currentSales = [];
+  let validCurrentSales = [];
+  let salesList = [];
+  let page = 1;
+  let callCount = 0;
+  let reachedValidSales = false;
+
+  do {
+    currentSales.splice(0);
+    validCurrentSales.splice(0);
+    currentSales = await getSales({ page });
+
+    validCurrentSales = currentSales.filter((sale) => {
+      const createdAt = new Date(sale.attributes.createdAt);
+      return createdAt <= new Date(endDate);
+    });
+
+    if (validCurrentSales.length > 0) {
+      reachedValidSales = true;
+    }
+
+    if (reachedValidSales) {
+      // Filter out sales after the startDate
+      validCurrentSales = validCurrentSales.filter((sale) => {
+        const createdAt = new Date(sale.attributes.createdAt);
+        return createdAt >= new Date(startDate);
+      });
+
+      salesList = salesList.concat(validCurrentSales);
+    }
+
+    page++;
+    callCount++;
+
+    // Check if it's the tenth call, and wait 15 seconds
+    if (callCount % 10 === 0) {
+      await delay(15000, callCount); // Wait for 15 seconds
+    }
+  } while (!reachedValidSales || validCurrentSales.length > 0);
+
+  return salesList.filter((sale) => sale.relationships.customer.data);
+}
+
+async function delay(ms, callCount) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function getSupaCustomers() {
+  try {
+    const supabaseClient = createClient(supabaseUrl, supabaseKey);
+
+    const { data, error } = await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq("gest_role_id", 6);
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+function combineSalesAndCustomers(salesList, customerList) {
+  // Create a map to store customers by their fudo_id
+  const customerMap = {};
+  customerList.forEach((customer) => {
+    if (customer.fudo_id) {
+      customerMap[customer.fudo_id] = {
+        ...customer,
+        sales: [], // Initialize an empty array to store sales
+        totSales: 0, // Initialize total sales to zero
+      };
+    }
+  });
+
+  // Iterate over each sale and find the associated customer
+  salesList.forEach((sale) => {
+    const customerId = sale.relationships.customer.data.id;
+    const customer = customerMap[customerId];
+    if (customer) {
+      // Add sale to the customer's sales array
+      customer.sales.push(sale);
+      // Add sale's total to customer's total sales
+      customer.totSales += sale.attributes.total;
+    }
+  });
+
+  // Convert customerMap object to an array of customers
+  const combinedData = Object.values(customerMap);
+
+  return combinedData;
+}
+
+async function getCommunityReport(params) {
+  try {
+    const customerList = await getSupaCustomers();
+    const salesList = await getSalesInInterval(params);
+
+    return combineSalesAndCustomers(salesList, customerList);
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   getVanilla,
   getDataFromFile,
@@ -483,4 +624,8 @@ module.exports = {
   getUsers,
   getUser,
   postUser,
+
+  getSalesInInterval,
+
+  getCommunityReport,
 };

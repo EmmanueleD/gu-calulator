@@ -182,6 +182,29 @@ const postUser = async (req, res) => {
   }
 };
 
+const getSalesInInterval = async (req, res) => {
+  try {
+    const data = await guService.getSalesInInterval(req.params);
+    res.send({ status: "OK", data });
+  } catch (error) {
+    res
+      .status(400)
+      .send({ status: "FAILED", message: error?.message || error });
+  }
+};
+
+const getCommunityReport = async (req, res) => {
+  const { startDate, endDate } = req.params;
+  try {
+    const data = await guService.getCommunityReport(req.params);
+    res.send({ status: "OK", data });
+  } catch (error) {
+    res
+      .status(400)
+      .send({ status: "FAILED", message: error?.message || error });
+  }
+};
+
 module.exports = {
   getVanilla,
   getDataFromFile,
@@ -200,4 +223,8 @@ module.exports = {
   getUsers,
   getUser,
   postUser,
+
+  getSalesInInterval,
+
+  getCommunityReport,
 };
