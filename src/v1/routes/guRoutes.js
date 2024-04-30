@@ -47,9 +47,4 @@ router.get(
   guController.getSalesInInterval
 );
 
-router.get(
-  "/api/v1/fudo-api/community-report/:startDate/:endDate",
-  guController.getCommunityReport
-);
-
 module.exports = router;

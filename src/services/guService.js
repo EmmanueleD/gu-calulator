@@ -3,11 +3,6 @@ const fs = require("fs");
 const https = require("https");
 const axios = require("axios");
 
-const { createClient } = require("@supabase/supabase-js");
-
-const supabaseUrl = process.env.NODE_SUPABASE_URL;
-const supabaseKey = process.env.NODE_SUPABASE_ANON;
-
 const getVanilla = () => {
   return "emmanuele ti dice 'ciao!";
 };
@@ -534,76 +529,15 @@ async function getSalesInInterval(params) {
 
     // Check if it's the tenth call, and wait 15 seconds
     if (callCount % 10 === 0) {
-      await delay(15000, callCount); // Wait for 15 seconds
+      await delay(15000); // Wait for 15 seconds
     }
   } while (!reachedValidSales || validCurrentSales.length > 0);
 
   return salesList.filter((sale) => sale.relationships.customer.data);
 }
 
-async function delay(ms, callCount) {
+async function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function getSupaCustomers() {
-  try {
-    const supabaseClient = createClient(supabaseUrl, supabaseKey);
-
-    const { data, error } = await supabaseClient
-      .from("profiles")
-      .select("*")
-      .eq("gest_role_id", 6);
-
-    if (error) {
-      throw error;
-    }
-
-    return data;
-  } catch (error) {
-    throw error;
-  }
-}
-
-function combineSalesAndCustomers(salesList, customerList) {
-  // Create a map to store customers by their fudo_id
-  const customerMap = {};
-  customerList.forEach((customer) => {
-    if (customer.fudo_id) {
-      customerMap[customer.fudo_id] = {
-        ...customer,
-        sales: [], // Initialize an empty array to store sales
-        totSales: 0, // Initialize total sales to zero
-      };
-    }
-  });
-
-  // Iterate over each sale and find the associated customer
-  salesList.forEach((sale) => {
-    const customerId = sale.relationships.customer.data.id;
-    const customer = customerMap[customerId];
-    if (customer) {
-      // Add sale to the customer's sales array
-      customer.sales.push(sale);
-      // Add sale's total to customer's total sales
-      customer.totSales += sale.attributes.total;
-    }
-  });
-
-  // Convert customerMap object to an array of customers
-  const combinedData = Object.values(customerMap);
-
-  return combinedData;
-}
-
-async function getCommunityReport(params) {
-  try {
-    const customerList = await getSupaCustomers();
-    const salesList = await getSalesInInterval(params);
-
-    return combineSalesAndCustomers(salesList, customerList);
-  } catch (error) {
-    throw error;
-  }
 }
 
 module.exports = {
@@ -626,6 +560,4 @@ module.exports = {
   postUser,
 
   getSalesInInterval,
-
-  getCommunityReport,
 };
