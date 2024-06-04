@@ -233,6 +233,7 @@ const getDataFromFile = async (filePath) => {
         extra_hours: 0,
         tot_hours: 0,
         late: false,
+        feriado: false,
         created_at: new Date(),
         updated_at: new Date(),
       };
